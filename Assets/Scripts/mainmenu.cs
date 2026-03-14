@@ -1,25 +1,28 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class mainmenu : MonoBehaviour
 {
     public HeightmapGenerator generator;
 
-    public void RiverClicked()
+    void GenerateAndProceed(string terrainType)
     {
-        Debug.Log("River button pressed.");
-        generator.GenerateAndDownload();
+        string savedPath = generator.GenerateAndDownload();
+
+        // Create bridge if it doesn't exist yet
+        if (TerrainDataBridge.Instance == null)
+        {
+            var go = new GameObject("TerrainDataBridge");
+            go.AddComponent<TerrainDataBridge>();
+        }
+
+        TerrainDataBridge.Instance.NoisemapPath = savedPath;
+        TerrainDataBridge.Instance.TerrainType  = terrainType;
+
         SceneManager.LoadScene("generationmenu");
     }
 
-    public void MountainClicked()
-    {
-        Debug.Log("Mountain button pressed");
-        generator.GenerateAndDownload();
-    }
-
-    public void PlainsClicked()
-    {
-        Debug.Log("Plains button pressed");
-        generator.GenerateAndDownload();
-    }
+    public void RiverClicked()    => GenerateAndProceed("River");
+    public void MountainClicked() => GenerateAndProceed("Mountain");
+    public void PlainsClicked()   => GenerateAndProceed("Plains");
 }

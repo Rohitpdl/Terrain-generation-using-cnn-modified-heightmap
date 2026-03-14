@@ -16,11 +16,16 @@ public class HeightmapGenerator : MonoBehaviour
 
     Texture2D heightmapTexture;
 
-    public void GenerateAndDownload()
+    // Exposed so generationmenu can display it
+    public Texture2D LastGeneratedTexture { get; private set; }
+
+    // Returns the full path of the saved file
+    public string GenerateAndDownload()
     {
         seed = Random.Range(0, 100000);
         heightmapTexture = GenerateHeightmap();
-        SaveHeightmapAsPNG(heightmapTexture);
+        LastGeneratedTexture = heightmapTexture;
+        return SaveHeightmapAsPNG(heightmapTexture);
     }
 
     Texture2D GenerateHeightmap()
@@ -101,11 +106,12 @@ public class HeightmapGenerator : MonoBehaviour
         return noiseMap;
     }
 
-    void SaveHeightmapAsPNG(Texture2D texture)
+    // Now returns the saved path instead of void
+    string SaveHeightmapAsPNG(Texture2D texture)
     {
         byte[] bytes = texture.EncodeToPNG();
 
-        string folderPath = @"D:\projectdata\heightmaps";
+        string folderPath = Path.Combine(Application.persistentDataPath, "heightmaps");
 
         if (!Directory.Exists(folderPath))
         {
@@ -118,5 +124,6 @@ public class HeightmapGenerator : MonoBehaviour
         File.WriteAllBytes(fullPath, bytes);
 
         Debug.Log("Heightmap saved to: " + fullPath);
+        return fullPath;
     }
 }
