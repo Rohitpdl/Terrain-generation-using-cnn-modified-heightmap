@@ -1384,6 +1384,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::mainmenu
   generator: {fileID: 775833399}
+  uploadedHeightmapPreview: {fileID: 2029990011}
+  uploadStatusText: {fileID: 0}
 --- !u!4 &749310541
 Transform:
   m_ObjectHideFlags: 0
@@ -2457,9 +2459,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1139162450}
-        m_TargetAssemblyTypeName: filemanager, Assembly-CSharp
-        m_MethodName: OpenFileExplorer
+      - m_Target: {fileID: 749310539}
+        m_TargetAssemblyTypeName: mainmenu, Assembly-CSharp
+        m_MethodName: OnUploadHeightmapClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class OrbitCamera : MonoBehaviour
 {
-    public Transform target;           // assign TerrainMesh in Inspector
+    public Transform target;
     public float distance    = 80f;
     public float xSpeed      = 120f;
     public float ySpeed      = 60f;
@@ -29,6 +29,7 @@ public class OrbitCamera : MonoBehaviour
     {
         if (target == null) return;
 
+        // ── Mouse drag to orbit ───────────────────────────────────────────────
         if (Input.GetMouseButton(0))
         {
             x += Input.GetAxis("Mouse X") * xSpeed * Time.deltaTime;
@@ -36,6 +37,7 @@ public class OrbitCamera : MonoBehaviour
             y  = Mathf.Clamp(y, yMinLimit, yMaxLimit);
         }
 
+        // ── Scroll wheel to zoom ──────────────────────────────────────────────
         distance -= Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
         distance  = Mathf.Clamp(distance, minDistance, maxDistance);
 

@@ -325,7 +325,7 @@ MonoBehaviour:
   resolution: 256
   terrainSize: 100
   heightScale: 20
-  terrainMaterial: {fileID: 2100000, guid: 8e055e76cf4a28e4e8fb52525a07be99, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: 43d4ac030a0a4e82ac3d13ac36336bb3, type: 2}
 --- !u!1 &300000
 GameObject:
   m_ObjectHideFlags: 0
