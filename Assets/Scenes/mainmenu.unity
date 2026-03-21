@@ -577,6 +577,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PythonClient
   generator: {fileID: 0}
+  uploadedHeightmapPreview: {fileID: 0}
+  uploadStatusText: {fileID: 0}
 --- !u!1 &399145064
 GameObject:
   m_ObjectHideFlags: 0
@@ -1625,7 +1627,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -631.3499, y: -301}
+  m_AnchoredPosition: {x: -471, y: -297}
   m_SizeDelta: {x: 454.4, y: 77.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &916204825
@@ -2279,7 +2281,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -702, y: 145}
+  m_AnchoredPosition: {x: -482, y: 145}
   m_SizeDelta: {x: 313.1, y: 77.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1641659612
@@ -2972,7 +2974,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -694.69995, y: -78}
+  m_AnchoredPosition: {x: -482, y: -85}
   m_SizeDelta: {x: 327.7, y: 77.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1942450229
@@ -3138,8 +3140,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 507, y: -183}
-  m_SizeDelta: {x: 531.7133, y: 465.2959}
+  m_AnchoredPosition: {x: 507, y: -146.52}
+  m_SizeDelta: {x: 455.65, y: 378.3551}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
