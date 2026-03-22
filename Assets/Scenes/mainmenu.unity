@@ -1676,7 +1676,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 749310539}
         m_TargetAssemblyTypeName: mainmenu, Assembly-CSharp
-        m_MethodName: PlainsClicked
+        m_MethodName: MountainClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

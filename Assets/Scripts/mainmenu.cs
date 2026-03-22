@@ -79,6 +79,7 @@ public class mainmenu : MonoBehaviour
         TerrainDataBridge.Instance.NoisemapPath    = noisePath;
         TerrainDataBridge.Instance.IsUserUploaded  = false;
         TerrainDataBridge.Instance.TerrainType     = terrainType;
+        
         // Clear any leftover style from a previous run
         TerrainDataBridge.Instance.StyleImageBytes = null;
         TerrainDataBridge.Instance.StyleImagePath  = "";

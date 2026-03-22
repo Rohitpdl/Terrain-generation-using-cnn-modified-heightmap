@@ -325,7 +325,17 @@ MonoBehaviour:
   resolution: 256
   terrainSize: 100
   heightScale: 20
-  terrainMaterial: {fileID: 2100000, guid: 43d4ac030a0a4e82ac3d13ac36336bb3, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: 23760a9970be5d54a8ce8b7efe8335fa, type: 2}
+  fallbackMaterial: {fileID: 2100000, guid: 23760a9970be5d54a8ce8b7efe8335fa, type: 2}
+  waterColor: {r: 0.1, g: 0.25, b: 0.55, a: 1}
+  sandColor: {r: 0.76, g: 0.7, b: 0.5, a: 1}
+  grassColor: {r: 0.2, g: 0.5, b: 0.15, a: 1}
+  rockColor: {r: 0.45, g: 0.38, b: 0.3, a: 1}
+  snowColor: {r: 0.92, g: 0.95, b: 1, a: 1}
+  waterLevel: 0.2
+  sandLevel: 0.28
+  grassLevel: 0.55
+  rockLevel: 0.78
 --- !u!1 &300000
 GameObject:
   m_ObjectHideFlags: 0

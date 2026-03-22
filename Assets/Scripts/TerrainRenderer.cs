@@ -8,22 +8,21 @@ public class TerrainRenderer : MonoBehaviour
     public float heightScale = 20f;
 
     [Header("Material")]
-    public Material terrainMaterial;
+    public Material terrainMaterial;   // assign TerrainVertexColor here
+    public Material fallbackMaterial;  // assign TerrainVertexColor here too as backup
 
-    [Header("Height Colors (low → high)")]
-    public Color waterColor    = new Color(0.10f, 0.25f, 0.55f);  // deep blue
-    public Color sandColor     = new Color(0.76f, 0.70f, 0.50f);  // sand
-    public Color grassColor    = new Color(0.20f, 0.50f, 0.15f);  // green
-    public Color rockColor     = new Color(0.45f, 0.38f, 0.30f);  // brown-grey
-    public Color snowColor     = new Color(0.92f, 0.95f, 1.00f);  // white
+    [Header("Height Colors (low to high)")]
+    public Color waterColor = new Color(0.10f, 0.25f, 0.55f);
+    public Color sandColor  = new Color(0.76f, 0.70f, 0.50f);
+    public Color grassColor = new Color(0.20f, 0.50f, 0.15f);
+    public Color rockColor  = new Color(0.45f, 0.38f, 0.30f);
+    public Color snowColor  = new Color(0.92f, 0.95f, 1.00f);
 
-    // Height thresholds (0-1, fraction of heightScale)
     [Header("Height Thresholds (0-1)")]
-    public float waterLevel  = 0.20f;
-    public float sandLevel   = 0.28f;
-    public float grassLevel  = 0.55f;
-    public float rockLevel   = 0.78f;
-    // above rockLevel = snow
+    public float waterLevel = 0.20f;
+    public float sandLevel  = 0.28f;
+    public float grassLevel = 0.55f;
+    public float rockLevel  = 0.78f;
 
     void Start()
     {
@@ -100,19 +99,16 @@ public class TerrainRenderer : MonoBehaviour
         MeshRenderer mr = gameObject.AddComponent<MeshRenderer>();
         mf.mesh = mesh;
 
-        // Use vertex-color material if none assigned
+        // Pick material — prefer terrainMaterial, fall back to fallbackMaterial
+        // Both should be assigned in Inspector so Unity includes them in the build
         if (terrainMaterial != null)
-        {
             mr.material = terrainMaterial;
-        }
+        else if (fallbackMaterial != null)
+            mr.material = fallbackMaterial;
         else
-        {
-           
-            Material mat = new Material(Shader.Find("Particles/Standard Unlit"));
-            if (mat.shader.name == "Hidden/InternalErrorShader")
-                mat = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
-            mr.material = mat;
-        }
+            Debug.LogError("TerrainRenderer: no material assigned! " +
+                           "Please assign TerrainVertexColor to both " +
+                           "Terrain Material and Fallback Material slots in the Inspector.");
 
         Debug.Log("Terrain mesh built — vertices: " + vertices.Length);
     }
@@ -120,13 +116,18 @@ public class TerrainRenderer : MonoBehaviour
     Color HeightToColor(float h)
     {
         if (h < waterLevel)
-            return Color.Lerp(waterColor, waterColor, Mathf.InverseLerp(0f, waterLevel, h));
+            return Color.Lerp(waterColor, waterColor,
+                              Mathf.InverseLerp(0f, waterLevel, h));
         if (h < sandLevel)
-            return Color.Lerp(waterColor, sandColor, Mathf.InverseLerp(waterLevel, sandLevel, h));
+            return Color.Lerp(waterColor, sandColor,
+                              Mathf.InverseLerp(waterLevel, sandLevel, h));
         if (h < grassLevel)
-            return Color.Lerp(sandColor, grassColor, Mathf.InverseLerp(sandLevel, grassLevel, h));
+            return Color.Lerp(sandColor, grassColor,
+                              Mathf.InverseLerp(sandLevel, grassLevel, h));
         if (h < rockLevel)
-            return Color.Lerp(grassColor, rockColor, Mathf.InverseLerp(grassLevel, rockLevel, h));
-        return Color.Lerp(rockColor, snowColor, Mathf.InverseLerp(rockLevel, 1f, h));
+            return Color.Lerp(grassColor, rockColor,
+                              Mathf.InverseLerp(grassLevel, rockLevel, h));
+        return Color.Lerp(rockColor, snowColor,
+                          Mathf.InverseLerp(rockLevel, 1f, h));
     }
 }
