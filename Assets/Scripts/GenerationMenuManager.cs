@@ -16,28 +16,21 @@ public class GenerationMenuManager : MonoBehaviour
     public Button   generateButton;
     public TMP_Text statusText;
 
-    [Header("Extra UI")]
+    [Header("Extra UI ")]
     public Button   backButton;
     public Button   changeStyleButton;
     public Button   resetStyleButton;
     public TMP_Text terrainTypeLabel;
     public TMP_Text styleSourceLabel;
 
-    [Header("Loading UI")]
-    public GameObject loadingPanel;  // assign a panel/spinner GameObject — shown during API call
-
     [Header("API Settings")]
     public string apiUrl = "http://localhost:5000/style_transfer";
 
-    bool      _styleReady        = false;
-    Coroutine _dotAnimCoroutine  = null;
+    bool _styleReady = false;
 
-    // ── Start ─────────────────────────────────────────────────────────────────
     void Start()
     {
         generateButton.interactable = false;
-
-        if (loadingPanel != null) loadingPanel.SetActive(false);
 
         if (TerrainDataBridge.Instance == null ||
             string.IsNullOrEmpty(TerrainDataBridge.Instance.NoisemapPath))
@@ -53,10 +46,9 @@ public class GenerationMenuManager : MonoBehaviour
         // Show content image
         StartCoroutine(LoadTexture(TerrainDataBridge.Instance.NoisemapPath, noisemapPreview));
 
-        // Case A: came via Upload button — style explicitly set by user
+        // Case A: style already set (came via Upload button)
         if (TerrainDataBridge.Instance.StyleImageBytes != null &&
-            TerrainDataBridge.Instance.StyleImageBytes.Length > 0 &&
-            TerrainDataBridge.Instance.IsUserUploaded == true)
+            TerrainDataBridge.Instance.StyleImageBytes.Length > 0)
         {
             StartCoroutine(LoadTexture(TerrainDataBridge.Instance.StyleImagePath, styleImagePreview));
             _styleReady = true;
@@ -64,65 +56,39 @@ public class GenerationMenuManager : MonoBehaviour
             if (styleSourceLabel != null) styleSourceLabel.text = "Uploaded style";
             statusText.text = "Style image ready.\nPress Generate, or change the style first.";
         }
-        // Case B: terrain type chosen — load correct default from StreamingAssets
+        // Case B: terrain type chosen — load default style from StreamingAssets
         else
         {
-            // Clear any stale bytes from a previous run
-            TerrainDataBridge.Instance.StyleImageBytes = null;
-            TerrainDataBridge.Instance.StyleImagePath  = "";
             StartCoroutine(TryLoadDefaultStyleFromDisk(tType));
         }
     }
 
-    // ── Dot animation coroutine ───────────────────────────────────────────────
-    IEnumerator AnimateDots()
-    {
-        string[] frames = {
-            "Generating .",
-            "Generating . .",
-            "Generating . . ."
-        };
-        int i = 0;
-        while (true)
-        {
-            statusText.text = frames[i % frames.Length];
-            i++;
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-
-    void StopLoading()
-    {
-        if (_dotAnimCoroutine != null)
-        {
-            StopCoroutine(_dotAnimCoroutine);
-            _dotAnimCoroutine = null;
-        }
-        if (loadingPanel != null) loadingPanel.SetActive(false);
-    }
-
-    // ── Default style loader ──────────────────────────────────────────────────
+    
     IEnumerator TryLoadDefaultStyleFromDisk(string terrainType)
     {
+        
         string fileName = terrainType + ".png";
         string filePath = Path.Combine(Application.streamingAssetsPath,
                                        "DefaultStyles", fileName);
-        string url = new System.Uri(filePath).AbsoluteUri;
+
+        
+        string url = "file:///" + filePath.Replace("\\", "/");
 
         statusText.text = terrainType + " Terrain\nLoading default style...";
 
+        
         using (UnityWebRequest uwr = UnityWebRequest.Get(url))
         {
             yield return uwr.SendWebRequest();
 
-            if (uwr.result != UnityWebRequest.Result.Success ||
-                uwr.downloadHandler.data.Length == 0)
+            if (uwr.result != UnityWebRequest.Result.Success || uwr.downloadHandler.data.Length == 0)
             {
+                // File not found — ask user to browse
                 _styleReady = false;
                 generateButton.interactable = false;
                 if (styleSourceLabel != null) styleSourceLabel.text = "No style selected";
                 statusText.text = terrainType + " Terrain\n" +
-                                  "No default style found. Place " + fileName +
+                                  "No default style found.\nPlace " + fileName +
                                   " in Assets/StreamingAssets/DefaultStyles/\n" +
                                   "or browse a style image below.";
                 Debug.LogWarning("[GMM] Default style not found at: " + filePath);
@@ -130,6 +96,8 @@ public class GenerationMenuManager : MonoBehaviour
             }
 
             byte[] bytes = uwr.downloadHandler.data;
+
+            // Store in bridge — ready to send straight to API
             TerrainDataBridge.Instance.StyleImageBytes = bytes;
             TerrainDataBridge.Instance.StyleImagePath  = filePath;
 
@@ -140,8 +108,8 @@ public class GenerationMenuManager : MonoBehaviour
                               "Default style loaded. Press Generate, or change the style.";
         }
 
-        // Load texture for preview only
-        string texUrl = new System.Uri(filePath).AbsoluteUri;
+        
+        string texUrl = "file:///" + filePath.Replace("\\", "/");
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(texUrl))
         {
             yield return uwr.SendWebRequest();
@@ -150,7 +118,7 @@ public class GenerationMenuManager : MonoBehaviour
         }
     }
 
-    // ── Browse / Change Style button ──────────────────────────────────────────
+    
     public void OnBrowseStyleImage()
     {
         var bp = new BrowserProperties();
@@ -173,19 +141,16 @@ public class GenerationMenuManager : MonoBehaviour
         });
     }
 
-    // ── Reset to Default button ───────────────────────────────────────────────
+   
     public void OnResetToDefaultStyle()
     {
         if (TerrainDataBridge.Instance == null) return;
-        TerrainDataBridge.Instance.StyleImageBytes = null;
-        TerrainDataBridge.Instance.StyleImagePath  = "";
         StartCoroutine(TryLoadDefaultStyleFromDisk(TerrainDataBridge.Instance.TerrainType));
     }
 
-    // ── Back button ───────────────────────────────────────────────────────────
+    
     public void OnBackClicked()
     {
-        StopLoading();
         if (TerrainDataBridge.Instance != null)
         {
             TerrainDataBridge.Instance.StyleImageBytes = null;
@@ -194,7 +159,7 @@ public class GenerationMenuManager : MonoBehaviour
         SceneManager.LoadScene("mainmenu");
     }
 
-    // ── Generate button ───────────────────────────────────────────────────────
+   
     public void OnGenerateClicked()
     {
         if (!_styleReady)
@@ -208,10 +173,7 @@ public class GenerationMenuManager : MonoBehaviour
     IEnumerator SendToAPI()
     {
         SetButtonsInteractable(false);
-
-        // Start animated dots + show loading panel
-        _dotAnimCoroutine = StartCoroutine(AnimateDots());
-        if (loadingPanel != null) loadingPanel.SetActive(true);
+        statusText.text = "Sending to style-transfer API...";
 
         byte[] contentBytes = File.ReadAllBytes(TerrainDataBridge.Instance.NoisemapPath);
         byte[] styleBytes   = TerrainDataBridge.Instance.StyleImageBytes;
@@ -221,7 +183,7 @@ public class GenerationMenuManager : MonoBehaviour
         string mime = (ext == ".jpg" || ext == ".jpeg") ? "image/jpeg" : "image/png";
 
         var form = new WWWForm();
-        form.AddField("steps", "200");   // change to 1000 for final quality
+        form.AddField("steps", "200");          // 200 for testing — change to 1000 for final
         form.AddBinaryData("content", contentBytes, "noisemap.png", "image/png");
         form.AddBinaryData("style",   styleBytes,   "style" + ext,  mime);
 
@@ -230,18 +192,14 @@ public class GenerationMenuManager : MonoBehaviour
             uwr.downloadHandler = new DownloadHandlerBuffer();
             yield return uwr.SendWebRequest();
 
-            // ── Error ─────────────────────────────────────────────────────────
             if (uwr.result != UnityWebRequest.Result.Success)
             {
-                StopLoading();
                 statusText.text = "API Error: " + uwr.error +
                                   "\nMake sure your Python server is running.";
                 SetButtonsInteractable(true);
                 yield break;
             }
 
-            // ── Success ───────────────────────────────────────────────────────
-            StopLoading();
             TerrainDataBridge.Instance.ResultHeightmapBytes = uwr.downloadHandler.data;
             statusText.text = "Done! Loading terrain viewer...";
             yield return new WaitForSeconds(0.5f);
@@ -249,7 +207,6 @@ public class GenerationMenuManager : MonoBehaviour
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
     void SetButtonsInteractable(bool state)
     {
         generateButton.interactable = state;
